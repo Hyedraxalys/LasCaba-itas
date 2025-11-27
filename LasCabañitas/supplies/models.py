@@ -11,7 +11,14 @@ class categoryItem(models.Model):
         verbose_name_plural = "3. Categoria de insumos"
 
 class cabin(models.Model):
+    ESTADOS = [
+        ('lista', 'Lista'),
+        ('abasteciendo', 'En Abastecimiento'),
+        ('preparacion', 'En Preparacion'),
+        ('disponible', 'Disponible')
+    ]
     name = models.CharField(max_length = 50, verbose_name = "Nombre de la cabaña")
+    status = models.CharField(max_length = 50, choices = ESTADOS, default = 'disponible', verbose_name = 'Estado')
 
     def __str__(self):
         return self.name
@@ -23,7 +30,7 @@ class cabin(models.Model):
 class items(models.Model):
     name = models.CharField(max_length = 50, verbose_name="Nombre del insumo")
     category = models.ForeignKey(categoryItem, on_delete = models.CASCADE, null = True, blank = True, verbose_name = "Categoría")
-    base_quantity = models.PositiveIntegerField(default = 1, verbose_name = "Cantidad Bbse")
+    base_quantity = models.PositiveIntegerField(default = 1, verbose_name = "Cantidad Base")
 
     def __str__(self):
         return self.name
@@ -73,27 +80,3 @@ class SupplyItem(models.Model):
         verbose_name = "Insumo"
         verbose_name_plural = "Inventario"
     
-class InventoryHistory(models.Model):
-    supply = models.ForeignKey("supply", on_delete=models.CASCADE, related_name="history")
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"Histórico de {self.supply.cabin.name} ({self.created_at.date()})"
-
-    class Meta:
-        verbose_name = "5. Histórico de inventario"
-        verbose_name_plural = "5. Históricos de inventarios"
-
-
-class InventoryHistoryItem(models.Model):
-    history = models.ForeignKey(InventoryHistory, on_delete=models.CASCADE, related_name="items")
-    item_name = models.CharField(max_length=50)
-    quantity = models.PositiveIntegerField()
-    status = models.CharField(max_length=10)
-
-    def __str__(self):
-        return ""
-
-    class Meta:
-        verbose_name = "Insumo histórico"
-        verbose_name_plural = "Insumos históricos"

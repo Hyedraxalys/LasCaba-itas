@@ -1,4 +1,4 @@
-from .models import InventoryHistory, InventoryHistoryItem
+from datalogs.models import InventoryHistory, InventoryHistoryItem
 
 def iniciar_abastecimiento_supplies(queryset):
     for sup in queryset:  
@@ -27,3 +27,8 @@ def finalizar_abastecimiento_supplies(queryset):
                 quantity=item.quantity,
                 status=item.status
             )
+
+def iniciar_preparacion_supplies(queryset):
+    for sup in queryset:
+        sup.cabin.status = 'preparacion'
+        sup.cabin.save()
