@@ -2,17 +2,16 @@ from django.contrib import admin
 from .models import InventoryHistory, InventoryHistoryItem
 
 #PDF generation
-from django.contrib import admin
 from django.http import HttpResponse
 from .pdf_utils import generar_inventario_pdf
 
 def generate_pdf(modeladmin, request, queryset):
-    supply_obj = queryset.first()
-    if not supply_obj:
+    history = queryset.first()   # ahora trabajamos con InventoryHistory
+    if not history:
         return
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = f'inline; filename="inventario_{supply_obj.cabin.name}.pdf"'
-    generar_inventario_pdf(supply_obj, response)
+    response['Content-Disposition'] = f'inline; filename="inventario_{history.cabin.name}.pdf"'
+    generar_inventario_pdf(history, response)   # pasamos el histórico
     return response
 generate_pdf.short_description = "Generar PDF de inventario de cabañas"
 
@@ -23,8 +22,8 @@ class InventoryHistoryItemInline(admin.TabularInline):
 
 @admin.register(InventoryHistory)
 class InventoryHistoryAdmin(admin.ModelAdmin):
-    list_display = ['supply', 'created_at']
-    search_fields = ['supply__cabin__name']
+    list_display = ['cabin', 'created_at']   # supply ya no existe
+    search_fields = ['cabin__name']
     inlines = [InventoryHistoryItemInline]
     actions = [generate_pdf]
 

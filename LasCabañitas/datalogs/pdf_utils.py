@@ -3,7 +3,7 @@ from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 
-def generar_inventario_pdf(cabin, response):
+def generar_inventario_pdf(history, response):
     # Crear documento
     doc = SimpleDocTemplate(response, pagesize=A4)
     elements = []
@@ -13,19 +13,22 @@ def generar_inventario_pdf(cabin, response):
     title_style = styles['Title']
     normal_style = styles['Normal']
 
-    # Título
-    elements.append(Paragraph(f"Inventario de {cabin.name}", title_style))
+    # Título con cabaña y fecha de finalización
+    elements.append(Paragraph(
+        f"Inventario de {history.cabin.name} (finalizado {history.created_at.strftime('%d-%m-%Y %H:%M')})",
+        title_style
+    ))
     elements.append(Spacer(1, 20))
 
     # Encabezados de tabla
     data = [["Insumo", "Cantidad", "Estado"]]
 
-    # Filas de inventario
-    for supply in cabin.supply_set.all():
+    # Filas de inventario desde el histórico
+    for item in history.items.all():
         data.append([
-            supply.item.name,
-            str(supply.quantity),
-            supply.get_status_display()
+            item.item_name,
+            str(item.quantity),
+            item.status
         ])
 
     # Crear tabla

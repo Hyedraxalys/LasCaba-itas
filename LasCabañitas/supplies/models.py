@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 class categoryItem(models.Model):
     name = models.CharField(max_length = 50, verbose_name = "Nombre de la categoría")
@@ -7,8 +8,8 @@ class categoryItem(models.Model):
         return self.name
     
     class Meta:
-        verbose_name = "3. Categoria de insumo"
-        verbose_name_plural = "3. Categoria de insumos"
+        verbose_name = "Categoria de insumo"
+        verbose_name_plural = "Categoria de insumos"
 
 class cabin(models.Model):
     ESTADOS = [
@@ -24,32 +25,37 @@ class cabin(models.Model):
         return self.name
     
     class Meta:
-        verbose_name = "1. Cabaña"
-        verbose_name_plural = "1. Cabañas"
+        verbose_name = "Cabaña"
+        verbose_name_plural = "Cabañas"
 
 class items(models.Model):
     name = models.CharField(max_length = 50, verbose_name="Nombre del insumo")
     category = models.ForeignKey(categoryItem, on_delete = models.CASCADE, null = True, blank = True, verbose_name = "Categoría")
-    base_quantity = models.PositiveIntegerField(default = 1, verbose_name = "Cantidad Base")
 
     def __str__(self):
         return self.name
 
     class Meta:
-        verbose_name = "2. Insumo"
-        verbose_name_plural = "2. Insumos"
+        verbose_name = "Insumo"
+        verbose_name_plural = "Insumos"
 
 class supply(models.Model):
-    cabin = models.ForeignKey(cabin, on_delete=models.PROTECT, verbose_name="Cabaña")
+    cabin = models.ForeignKey("cabin", on_delete=models.PROTECT, verbose_name="Cabaña")
     created_at = models.DateTimeField(auto_now_add=True)
+    name = models.CharField(max_length=150, editable=False, verbose_name="Nombre del inventario")
+
+    def save(self, *args, **kwargs):
+        fecha = timezone.localtime(self.created_at or timezone.now()).strftime("%Y-%m-%d")
+        self.name = f"{self.cabin.name} - Inventario - {fecha}"
+        super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"Inventario de {self.cabin.name} ({self.created_at.date()})"
+        return self.name
     
     class Meta:
-        verbose_name = "4. Inventario de cabaña"
-        verbose_name_plural = "4. Inventarios de cabañas"
-
+        verbose_name = "Inventario de cabaña"
+        verbose_name_plural = "Inventarios de cabañas"
+        
 class SupplyItem(models.Model):
     ESTADOS = [
         ('disponible', 'Disponible'),
@@ -63,20 +69,36 @@ class SupplyItem(models.Model):
     quantity = models.PositiveIntegerField(default=0, verbose_name="Cantidad")
     status = models.CharField(max_length=10, choices=ESTADOS, default='disponible', verbose_name="Estado")
 
-    def save(self, *args, **kwargs):
-        if self.status != 'pendiente':
-            if self.quantity == 0:
-                self.status = 'agotado'
-            elif self.quantity < self.item.base_quantity:
-                self.status = 'bajo'
-            else:
-                self.status = 'disponible'
-        super().save(*args, **kwargs)
-
     def __str__(self):
         return f"{self.item.name} ({self.quantity}, {self.get_status_display()})"
     
     class Meta:
         verbose_name = "Insumo"
         verbose_name_plural = "Inventario"
+        verbose_name_plural = "Inventario"
     
+class BaseSupply(models.Model):
+    cabin = models.ForeignKey("cabin", on_delete=models.PROTECT, verbose_name="Cabaña")
+    name = models.CharField(max_length=100, verbose_name="Nombre del inventario base", editable=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        if not self.name:  # solo si no se definió manualmente
+            fecha = timezone.localtime(self.created_at or timezone.now()).strftime("%Y-%m-%d")
+            self.name = f"{self.cabin.name} - Inventario base - {fecha}"
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "Inventario base"
+        verbose_name_plural = "Inventarios base"
+
+class BaseSupplyItem(models.Model):
+    base_supply = models.ForeignKey(BaseSupply, on_delete=models.CASCADE, related_name="items")
+    item = models.ForeignKey("items", on_delete=models.CASCADE, verbose_name="Insumo")
+    quantity = models.PositiveIntegerField(default=0, verbose_name="Cantidad")
+
+    def __str__(self):
+        return f"{self.item.name} ({self.quantity})"
