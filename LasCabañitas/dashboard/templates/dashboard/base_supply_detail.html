@@ -1,0 +1,55 @@
+{% extends "core/base.html" %}
+{% block content %}
+
+<h1>{{ base_supply.name }} ({{ base_supply.cabin.name }})</h1>
+<p>Bienvenido {{ username }}</p>
+
+<h2>Ítems existentes</h2>
+<table border="1" cellpadding="5">
+  <tr>
+    <th>Insumo</th>
+    <th>Cantidad</th>
+    <th>Acciones</th>
+  </tr>
+  {% for item in items %}
+    <tr>
+      <td>{{ item.item.name }}</td>
+      <td>{{ item.quantity }}</td>
+      <td>
+        <!-- Editar -->
+        <form method="post" style="display:inline;">
+          {% csrf_token %}
+          <input type="number" name="quantity" value="{{ item.quantity }}" min="0">
+          <button type="submit" name="edit_base_item" value="{{ item.id }}">Guardar</button>
+        </form>
+
+        <!-- Eliminar -->
+        <form method="post" style="display:inline;" onsubmit="return confirm('¿Eliminar este ítem?');">
+          {% csrf_token %}
+          <button type="submit" name="delete_base_item" value="{{ item.id }}">Eliminar</button>
+        </form>
+      </td>
+    </tr>
+  {% endfor %}
+</table>
+
+<h2>Agregar nuevo ítem</h2>
+<form method="post">
+  {% csrf_token %}
+  <label for="item_id">Insumo:</label>
+  <select name="item_id" id="item_id">
+    {% for insumo in all_items %}
+      <option value="{{ insumo.id }}">{{ insumo.name }}</option>
+    {% endfor %}
+  </select>
+  <label for="quantity">Cantidad:</label>
+  <input type="number" name="quantity" min="0" value="0">
+  <button type="submit" name="add_base_item" value="1">Agregar</button>
+</form>
+
+<p style="margin-top: 16px;">
+  <a href="{% url 'admin_dashboard' %}">Volver al dashboard</a>
+</p>
+
+
+{% endblock %}

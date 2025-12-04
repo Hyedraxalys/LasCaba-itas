@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'core',
     'supplies',
     'datalogs',
+    'dashboard',
 ]
 
 MIDDLEWARE = [
@@ -50,6 +51,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'core.middleware.RoleRedirectMiddleware',
 ]
 
 ROOT_URLCONF = 'LasCabañitas.urls'
@@ -129,4 +131,5 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = 'core.User'
+LOGIN_URL = "/login/"
+LOGOUT_REDIRECT_URL = "/login/"

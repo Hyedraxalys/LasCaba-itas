@@ -1,0 +1,68 @@
+{% extends "core/base.html" %}
+{% block content %}
+
+<div class="dashboard-container">
+<h1>Reabastecimiento de {{ supply.name }} ({{ supply.cabin.name }})</h1>
+<p>Bienvenido {{ username }}</p>
+
+<form method="post" id="restockForm">
+  {% csrf_token %}
+  <table> 
+    <thead>
+      <tr>
+        <th>Insumo</th>
+        <th>Cantidad actual</th>
+        <th>Cantidad base</th>
+        <th>Editar</th>
+        <th>Estado</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in supply_items %}
+        <tr>
+          <td>{{ item.item.name }}</td>
+          <td>{{ item.quantity }}</td>
+          <td>{{ item.base_quantity }}</td>
+          <td>
+            <input type="number"
+                   name="quantity_{{ item.id }}"
+                   value="{{ item.quantity }}"
+                   min="0"
+                   max="{{ item.base_quantity }}"
+                   required>
+          </td>
+          <td>{{ item.get_status_display }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div style="margin-top: 20px;">
+    <button type="submit" name="save_restock" value="{{ supply.id }}" class="primary-button">
+      Guardar cambios y finalizar reabastecimiento
+    </button>
+  </div>
+</form>
+<script>
+// ... (Script de validación del navegador)
+document.querySelectorAll('input[type="number"][name^="quantity_"]').forEach(function(input) {
+  input.addEventListener('input', function() {
+    const value = parseInt(input.value);
+    const min = parseInt(input.getAttribute('min'));
+    const max = parseInt(input.getAttribute('max'));
+    if (isNaN(value)) {
+      input.setCustomValidity('El valor no es válido.');
+    } else if (value < min) {
+      input.setCustomValidity('No se aceptan números negativos.');
+    } else if (value > max) {
+      input.setCustomValidity('No puede superar la cantidad base (' + max + ').');
+    } else {
+      input.setCustomValidity('');
+    }
+  });
+});
+</script>
+<div style="margin-top: 30px;">
+  <a href="{% url 'admin_dashboard' %}" class="button-link primary-button">Volver al dashboard</a>
+</div>
+</div>
+{% endblock %}

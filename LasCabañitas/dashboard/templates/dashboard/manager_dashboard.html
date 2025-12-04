@@ -1,0 +1,38 @@
+{% extends "core/base.html" %}
+{% block content %}
+<div class="dashboard-container">
+  
+  <h1>Panel de Encargado de Cabañas</h1>
+  <h2>Cabañas en preparación</h2>
+  <ul class="clean-list">
+    {% for cab in prep_cabins %}
+      <li class="item-with-action">
+        <span>
+          {{ cab.name }} (ID: {{ cab.id }})
+        </span>
+        {% with found_supplies=supplies|dictsort:"cabin_id" %}
+          {% for sup in supplies %}
+            {% if sup.cabin_id == cab.id %}
+              <div class="actions">
+                <span style="color: var(--success-color); font-size: 0.9em; margin-right: 10px;">[Inventario ID: {{ sup.id }}]</span>
+                <a href="{% url 'manager_inventory_detail' sup.pk %}" class="button-link primary-button">Realizar inventario</a>
+              </div>
+            {% endif %}
+          {% endfor %}
+          {% if not supplies|dictsort:"cabin_id"|yesno:"1,0" %}
+            <span style="color: var(--danger-color); font-weight: bold;">No hay inventario asociado a esta cabaña.</span>
+          {% endif %}
+        {% endwith %}
+      </li>
+    {% empty %}
+      <li>No hay cabañas en preparación.</li>
+    {% endfor %}
+  </ul>
+  <div style="margin-top: 30px;">
+    <form method="post" action="{% url 'logout' %}">
+      {% csrf_token %}
+      <button type="submit" class="primary-button">Cerrar sesión</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends "core/base.html" %}
+{% block content %}
+
+<div class="dashboard-container">
+    <h1>Dashboard Administrador</h1>
+    <p>Bienvenido {{ username }}</p> <h2>Notificaciones </h2>
+    {% if abasteciendo_cabins and abasteciendo_cabins.count > 0 %}
+      <div style="background: #fff3cd; color: #856404; border: 1px solid #ffeeba; padding: 10px; margin-bottom: 20px; border-radius: 5px;">
+        <strong>Notificación:</strong> Hay cabañas en abastecimiento:
+        <ul style="margin: 0;">
+          {% for cab in abasteciendo_cabins %}
+            <li>{{ cab.name }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% else %}
+      <p>No hay cabañas en abastecimiento.</p>
+    {% endif %}
+
+    <h2>Inventarios base</h2>
+    <ul class="clean-list">
+      {% for base in base_supplies %}
+        <li class="item-with-action">
+          <span>{{ base.name }} ({{ base.cabin.name }})</span>
+          <a href="{% url 'base_supply_detail' base.pk %}" class="button-link primary-button">Ver/Editar</a> 
+        </li>
+      {% endfor %}
+    </ul>
+
+    <h2>Cabañas</h2>
+    <form method="post">
+      {% csrf_token %}
+      <ul class="clean-list">
+        {% for cab in cabins %}
+          <li class="item-with-action">
+            <span>{{ cab.name }} - Estado: {{ cab.get_status_display }}</span>
+            <button type="submit" name="prepare_cabin" value="{{ cab.id }}" class="primary-button">
+              Comenzar preparación
+            </button>
+          </li>
+        {% endfor %}
+      </ul>
+    </form>
+
+    <h2>Inventarios en abastecimiento</h2>
+
+    {% for sup in abasteciendo_supplies %}
+      <div class="inventory-card">
+        <h3>{{ sup.name }} ({{ sup.cabin.name }})</h3>
+        <a href="{% url 'supply_restock_detail' sup.pk %}" class="button-link primary-button">Ver/Abastecer</a>
+      </div>
+    {% empty %}
+      <p>No hay inventarios en abastecimiento actualmente.</p>
+    {% endfor %}
+
+    <div class="full-width-button-container">
+      <a href="{% url 'inventory_history_list' %}" class="button-link primary-button full-width">Ver históricos de inventarios</a>
+    </div>
+
+    <form method="post" action="{% url 'logout' %}">
+      {% csrf_token %}
+      <button type="submit">Cerrar sesión</button>
+    </form>
+</div>
+
+{% endblock %}

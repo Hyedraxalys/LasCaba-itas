@@ -1,0 +1,157 @@
+/* --- Variables CSS (Opcional, pero útil) --- */
+:root {
+    --primary-color: #007bff; /* Azul profesional para botones y enlaces */
+    --secondary-color: #6c757d; /* Gris para texto secundario */
+    --background-light: #f8f9fa; /* Fondo general muy claro */
+    --text-dark: #343a40; /* Color de texto principal */
+    --success-color: #28a745; /* Verde para éxito/disponible */
+    --warning-color: #ffc107; /* Amarillo para preparación/pendiente */
+    --danger-color: #dc3545; /* Rojo para errores/agotado */
+}
+
+/* --- Base y Tipografía --- */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--background-light);
+    color: var(--text-dark);
+    margin: 0;
+    padding: 0;
+}
+
+h1, h2 {
+    color: var(--text-dark);
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 10px;
+    margin-top: 20px;
+}
+
+/* Estilo para los contenedores principales del dashboard (si existen) */
+.dashboard-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Sombra suave */
+    border-radius: 8px;
+}
+
+/* --- Estilo de Botones Generales --- */
+button, input[type="submit"] {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    margin-right: 10px; /* Separación entre botones */
+}
+
+button:hover, input[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+/* --- Estilo de Enlaces --- */
+a {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+/* --- NUEVOS ESTILOS PARA DISTRIBUCIÓN Y BOTONES DE ENLACE --- */
+
+/* Clase base para que los enlaces se vean como botones */
+.button-link {
+    display: inline-block; /* Ocupa el espacio necesario, permite padding */
+    padding: 8px 15px;
+    border-radius: 5px;
+    text-align: center;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease, opacity 0.3s ease;
+}
+
+/* Estilo para botones primarios (acción principal) */
+.primary-button {
+    background-color: var(--primary-color);
+    color: white;
+    border: 1px solid var(--primary-color);
+}
+.primary-button:hover {
+    background-color: #0056b3;
+}
+
+/* Estilo para botones secundarios/enlaces (acción secundaria) */
+.secondary-button {
+    background-color: var(--background-light); /* Fondo claro */
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+}
+.secondary-button:hover {
+    background-color: #e9ecef;
+}
+
+/* Contenedor para la lista de Inventarios Base y Cabañas */
+.clean-list {
+    list-style: none;
+    padding: 0;
+}
+
+/* Estilo para cada item de lista con una acción a la derecha */
+.item-with-action {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #f0f0f0; /* Separación sutil */
+}
+.item-with-action:last-child {
+    border-bottom: none;
+}
+
+/* Contenedor para el enlace de Históricos (Ancho completo) */
+.full-width-button-container {
+    margin-top: 30px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+.full-width {
+    width: 100%;
+    box-sizing: border-box; /* Incluye padding/border en el ancho total */
+}
+
+/* Estilo para las tarjetas de inventario para darles separación */
+.inventory-card {
+    border: 1px solid #dee2e6;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+}
+
+/* --- Modificación en la regla de Tablas (styles.css) --- */
+th, td {
+    /* Aumentar el padding para dar más aire a las celdas */
+    padding: 18px 20px; 
+    border: 1px solid #dee2e6;
+    /* Asegurar que el contenido vertical esté centrado (importante para los inputs) */
+    vertical-align: middle; 
+}
+
+/* --- Modificación en la regla de Inputs en Tablas (styles.css) --- */
+td input[type="number"] {
+    width: 80px; 
+    /* Aumentar el padding del input para que se vea más grande */
+    padding: 10px; 
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    text-align: right;
+    /* Añadir un pequeño margen vertical para separarlo de los bordes */
+    margin: 5px 0; 
+}
+
